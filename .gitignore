@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.cache_djpk/
+.streamlit/secrets.toml
+.venv/
+venv/
+*.egg-info/
+.DS_Store
+Thumbs.db
