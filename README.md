@@ -105,3 +105,7 @@ Tiga berkas, semuanya publik. Rincian lengkap beserta catatan pengolahan ada di 
 ## Teknologi
 
 Python 3.11+, pandas, Streamlit, streamlit-folium, Folium, Plotly, pytest.
+
+## Lisensi
+
+MIT. Data APBD dan penduduk bersifat publik (DJPK Kemenkeu, BPS); GeoJSON provinsi oleh Deny Herianto, CC BY 4.0.
