@@ -51,7 +51,7 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-Menjalankan tes:
+Menjalankan tes (otomatis jalan juga di GitHub Actions setiap push dan pull request):
 
 ```bash
 pytest
