@@ -1,6 +1,6 @@
 # 💸 Follow the Money
 
-> **Setiap rupiah punya tujuan.** Dasbor interaktif untuk menelusuri **APBD 38 provinsi** Indonesia:
+> **Setiap rupiah punya tujuan.** Dashboard interaktif untuk menelusuri **APBD 38 provinsi** Indonesia:
 > dari mana uang daerah datang (pajak sendiri atau kiriman pusat), ke mana ia pergi (gaji, barang, atau
 > pembangunan), dan bagaimana petanya berubah ketika angka dibaca per penduduk.
 > Dibangun dengan Python, pandas, Folium (Leaflet), Plotly, dan Streamlit dari data publik DJPK Kementerian Keuangan.
@@ -31,13 +31,13 @@ merapikan struktur akun, menghitung indikator, dan menyajikannya dalam choroplet
 
 | Tab | Isi |
 |---|---|
-| 🗺️ Peta | Choropleth Folium 38 provinsi untuk 12 indikator (total belanja, transfer pusat, belanja per penduduk, kemandirian fiskal, porsi belanja modal, serapan anggaran, dan lain-lain), tooltip ringkas per provinsi, serta peringkat 38 provinsi di sampingnya |
-| 🔍 Profil Provinsi | Diagram **Sankey** aliran uang satu provinsi: rincian pendapatan → kas daerah → jenis belanja; anggaran vs realisasi; komposisi belanja dibanding nasional; perjalanan 2022–2024 |
-| ⚖️ Perbandingan | Scatter kemandirian fiskal vs belanja per penduduk (ukuran = penduduk, warna = pulau), batang bertumpuk komposisi belanja seluruh provinsi, tabel agregat per pulau |
-| 📈 Tren | Garis indikator pilihan 2022–2024, pertumbuhan tahunan per provinsi, potret nasional per jenis belanja |
-| 📋 Data & Sumber | Tabel indikator, rincian akun per provinsi, unduh CSV, sumber dan keterbatasan data |
-| 🧭 Cara Kerja | Alur data, rumus indikator, dan hal-hal yang perlu diwaspadai |
-| 🎓 Mode belajar | Toggle di sidebar: setiap tab menampilkan penjelasan konsep (choropleth, struktur APBD, per kapita, skala log) |
+| 🗺️ Map | Choropleth Folium 38 provinsi untuk 12 indikator (total belanja, transfer pusat, belanja per penduduk, kemandirian fiskal, porsi belanja modal, serapan anggaran, dan lain-lain), tooltip ringkas per provinsi, serta peringkat 38 provinsi di sampingnya |
+| 🔍 Province profile | Diagram **Sankey** aliran uang satu provinsi: rincian pendapatan → kas daerah → jenis belanja; anggaran vs realisasi; komposisi belanja dibanding nasional; perjalanan 2022–2024 |
+| ⚖️ Comparison | Scatter kemandirian fiskal vs belanja per penduduk (ukuran = penduduk, warna = pulau), batang bertumpuk komposisi belanja seluruh provinsi, tabel agregat per pulau |
+| 📈 Trends | Garis indikator pilihan 2022–2024, pertumbuhan tahunan per provinsi, potret nasional per jenis belanja |
+| 📋 Data & Sources | Tabel indikator, rincian akun per provinsi, download CSV, sumber dan keterbatasan data |
+| 🧭 How it works | Alur data, rumus indikator, dan hal-hal yang perlu diwaspadai |
+| 🎓 Learning mode | Toggle di sidebar: setiap tab menampilkan penjelasan konsep (choropleth, struktur APBD, per kapita, skala log) |
 
 ![Profil provinsi dengan diagram Sankey](docs/screenshots/02_profil.png)
 ![Perbandingan antar provinsi](docs/screenshots/03_perbandingan.png)

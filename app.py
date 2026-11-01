@@ -1,6 +1,6 @@
 """Follow the Money: ke mana uang daerah mengalir?
 
-Dasbor Streamlit untuk menelusuri APBD 38 provinsi (agregat pemprov + kabupaten/kota)
+Dashboard Streamlit untuk menelusuri APBD 38 provinsi (agregat pemprov + kabupaten/kota)
 dari data publik DJPK Kementerian Keuangan.
 """
 from __future__ import annotations
@@ -59,16 +59,16 @@ TAHUN_TERSEDIA = sorted(apbd["tahun"].unique())
 with st.sidebar:
     st.title("💸 Follow the Money")
     st.caption("Every rupiah has a destination.")
-    tahun = st.select_slider("Tahun anggaran", options=TAHUN_TERSEDIA, value=TAHUN_TERSEDIA[-1])
-    basis = st.radio("Angka yang dipakai", ["realisasi", "anggaran"], horizontal=True,
+    tahun = st.select_slider("Fiscal year", options=TAHUN_TERSEDIA, value=TAHUN_TERSEDIA[-1])
+    basis = st.radio("Figures", ["realisasi", "anggaran"], horizontal=True,
                      help="Realisasi = yang benar-benar diterima/dibelanjakan. Anggaran = rencana dalam APBD.")
-    mode_belajar = st.toggle("🎓 Mode belajar", value=False,
+    mode_belajar = st.toggle("🎓 Learning mode", value=False,
                              help="Menampilkan penjelasan konsep dan rumus di setiap bagian.")
     st.divider()
     st.markdown(
         "Data: APBD seluruh pemda per provinsi (pemprov + kabupaten/kota) dari "
         "[Portal SIKD DJPK Kemenkeu](https://djpk.kemenkeu.go.id/portal/data/apbd); "
-        "penduduk dari BPS. Rincian di tab **Data & Sumber**."
+        "penduduk dari BPS. Rincian di tab **Data & Sources**."
     )
 
 lebar = tabel(basis)
@@ -91,7 +91,7 @@ k3.metric("Porsi transfer pusat", persen(nasional["ketergantungan"]), help="TKD 
 k4.metric("Porsi belanja modal", persen(nasional["porsi_modal"]), help="Belanja modal / total belanja daerah")
 
 tab_peta, tab_profil, tab_banding, tab_tren, tab_data, tab_cara = st.tabs(
-    ["🗺️ Peta", "🔍 Profil Provinsi", "⚖️ Perbandingan", "📈 Tren", "📋 Data & Sumber", "🧭 Cara Kerja"]
+    ["🗺️ Map", "🔍 Province profile", "⚖️ Comparison", "📈 Trends", "📋 Data & Sources", "🧭 How it works"]
 )
 
 # ---------------------------------------------------------------- tab peta
@@ -111,7 +111,7 @@ with tab_peta:
 
     with kolom_kanan:
         urut = analisis.peringkat(th, pilihan)
-        st.subheader("Peringkat 38 provinsi")
+        st.subheader("38 provinces ranked")
         fig = px.bar(
             urut.sort_values(pilihan), x=pilihan, y="provinsi", orientation="h", color="pulau",
             color_discrete_map=WARNA_PULAU, custom_data=["peringkat"],
@@ -149,7 +149,7 @@ with tab_peta:
 # ---------------------------------------------------------------- tab profil
 with tab_profil:
     daftar = th.sort_values("provinsi")["provinsi"].tolist()
-    prov = st.selectbox("Pilih provinsi", daftar, index=daftar.index("Jawa Barat") if "Jawa Barat" in daftar else 0)
+    prov = st.selectbox("Select province", daftar, index=daftar.index("Jawa Barat") if "Jawa Barat" in daftar else 0)
     baris = th[th["provinsi"] == prov].iloc[0]
     kode = baris["kode_bps"]
     semua_tahun = lebar[lebar["kode_bps"] == kode].sort_values("tahun")
@@ -265,7 +265,7 @@ with tab_banding:
                "tinggi tetapi hampir seluruhnya dari pusat. Kiri bawah: belanja per orang kecil dan bergantung pada pusat.")
 
     st.subheader("Komposisi belanja setiap provinsi")
-    urutkan = st.selectbox("Urutkan menurut porsi", ["Modal", "Pegawai", "Barang & Jasa"], index=0)
+    urutkan = st.selectbox("Sort by share", ["Modal", "Pegawai", "Barang & Jasa"], index=0)
     komposisi = analisis.komposisi_belanja(th)
     kunci_urut = {"Modal": "porsi_modal", "Pegawai": "porsi_pegawai", "Barang & Jasa": "porsi_barang"}[urutkan]
     urutan = th.sort_values(kunci_urut, ascending=False)["provinsi"].tolist()
@@ -305,18 +305,18 @@ with tab_banding:
 # ---------------------------------------------------------------- tab tren
 with tab_tren:
     st.subheader("Perubahan 2022 → 2024")
-    metrik_tren = st.selectbox("Indikator", options=list(analisis.METRIK),
+    metrik_tren = st.selectbox("Indicator", options=list(analisis.METRIK),
                                format_func=lambda k: analisis.METRIK[k].nama, index=0, key="metrik_tren")
     m_tren = analisis.METRIK[metrik_tren]
     bawaan = analisis.peringkat(th, metrik_tren, n=6)["provinsi"].tolist()
-    pilih_prov = st.multiselect("Provinsi", sorted(lebar["provinsi"].unique()), default=bawaan)
+    pilih_prov = st.multiselect("Province", sorted(lebar["provinsi"].unique()), default=bawaan)
     data_tren = lebar[lebar["provinsi"].isin(pilih_prov)]
     fig = px.line(data_tren, x="tahun", y=metrik_tren, color="provinsi", markers=True)
     fig.update_layout(xaxis=dict(tickmode="array", tickvals=TAHUN_TERSEDIA), xaxis_title="", yaxis_title=m_tren.nama)
     st.plotly_chart(grafik_rapi(fig, 460), use_container_width=True)
 
     st.subheader("Siapa yang tumbuh paling cepat?")
-    kolom_tumbuh = st.radio("Pertumbuhan", ["belanja", "pendapatan", "pad", "tkdd"], horizontal=True,
+    kolom_tumbuh = st.radio("Growth", ["belanja", "pendapatan", "pad", "tkdd"], horizontal=True,
                             format_func=lambda k: {"belanja": "Belanja", "pendapatan": "Pendapatan", "pad": "PAD", "tkdd": "Transfer pusat"}[k])
     tumbuh = analisis.tambah_pertumbuhan(lebar, kolom_tumbuh)
     tumbuh_th = tumbuh[(tumbuh["tahun"] == tahun)].dropna(subset=[f"pertumbuhan_{kolom_tumbuh}"])
@@ -358,13 +358,13 @@ with tab_data:
         },
     )
     u1, u2 = st.columns(2)
-    u1.download_button("⬇️ Unduh tabel indikator (CSV)", lebar.to_csv(index=False).encode("utf-8"),
+    u1.download_button("⬇️ Download tabel indikator (CSV)", lebar.to_csv(index=False).encode("utf-8"),
                        file_name="indikator_apbd_provinsi.csv", mime="text/csv")
-    u2.download_button("⬇️ Unduh data mentah per akun (CSV)", apbd.to_csv(index=False).encode("utf-8"),
+    u2.download_button("⬇️ Download data mentah per akun (CSV)", apbd.to_csv(index=False).encode("utf-8"),
                        file_name="apbd_provinsi.csv", mime="text/csv")
 
-    st.subheader("Rincian akun")
-    prov_data = st.selectbox("Provinsi", sorted(apbd["provinsi"].unique()), key="prov_data")
+    st.subheader("Account details")
+    prov_data = st.selectbox("Province", sorted(apbd["provinsi"].unique()), key="prov_data")
     rinci = apbd[(apbd["provinsi"] == prov_data) & (apbd["tahun"] == tahun)].copy()
     rinci["akun"] = rinci.apply(lambda r: ("    " * (r["tingkat"] - 1)) + label(r["akun"]), axis=1)
     rinci["% realisasi"] = (rinci["realisasi"] / rinci["anggaran"].where(rinci["anggaran"] != 0) * 100).round(1)
@@ -372,7 +372,7 @@ with tab_data:
                  column_config={"anggaran": st.column_config.NumberColumn(format="localized"),
                                 "realisasi": st.column_config.NumberColumn(format="localized")})
 
-    st.subheader("Sumber dan keterbatasan")
+    st.subheader("Sources & limitations")
     st.markdown(muat_data.muat_sumber())
 
 # ---------------------------------------------------------------- tab cara kerja
