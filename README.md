@@ -9,6 +9,8 @@
 (APBD) across 38 provinces, 2022–2024: where the money comes from, where it goes, and how the choropleth
 flips once you divide by population. Built with Python, pandas, Folium, Plotly and Streamlit using public data only.*
 
+**🚀 Coba langsung di browser:** [follow-the-money.streamlit.app](https://follow-the-money.streamlit.app)
+
 ![Peta belanja per penduduk](docs/screenshots/01_peta.png)
 
 > ℹ️ **Penafian.** Seluruh angka berasal dari **sumber publik**: Portal Data SIKD DJPK Kementerian Keuangan
