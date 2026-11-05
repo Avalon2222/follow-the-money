@@ -5,9 +5,19 @@
 > pembangunan), dan bagaimana petanya berubah ketika angka dibaca per penduduk.
 > Dibangun dengan Python, pandas, Folium (Leaflet), Plotly, dan Streamlit dari data publik DJPK Kementerian Keuangan.
 
-*Every rupiah has a destination. An interactive dashboard of Indonesian regional government finances
-(APBD) across 38 provinces, 2022–2024: where the money comes from, where it goes, and how the choropleth
-flips once you divide by population. Built with Python, pandas, Folium, Plotly and Streamlit using public data only.*
+## 🇬🇧 In English
+
+**Every rupiah has a destination.** An interactive dashboard of regional government budgets (APBD) for all 38 Indonesian provinces, 2022–2024: where the money comes from (local taxes or transfers from Jakarta), where it goes (salaries, goods, or development), and how the map flips once you divide by population.
+
+- **Map** 12 indicators across 38 provinces, from total spending to fiscal independence.
+- **Follow** one province's money with a Sankey diagram: revenue, treasury, spending.
+- **Compare** fiscal independence against per-capita spending, province by province.
+
+**Built with:** Python, pandas, Folium, Plotly, Streamlit  
+**Data:** SIKD portal of the Ministry of Finance (DJPK) and population figures from BPS  
+**Engineering:** pytest suite with CI on GitHub Actions, plus a learning mode on how APBD and per-capita math work
+
+*The rest of this README is in Indonesian.*
 
 **🚀 Coba langsung di browser:** [follow-the-money.streamlit.app](https://follow-the-money.streamlit.app)
 
