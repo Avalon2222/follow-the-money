@@ -1,5 +1,7 @@
 # 💸 Follow the Money
 
+[![Tes](https://github.com/Avalon2222/follow-the-money/actions/workflows/tes.yml/badge.svg)](https://github.com/Avalon2222/follow-the-money/actions/workflows/tes.yml) [![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/) [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE) [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://follow-the-money.streamlit.app)
+
 > **Setiap rupiah punya tujuan.** Dashboard interaktif untuk menelusuri **APBD 38 provinsi** Indonesia:
 > dari mana uang daerah datang (pajak sendiri atau kiriman pusat), ke mana ia pergi (gaji, barang, atau
 > pembangunan), dan bagaimana petanya berubah ketika angka dibaca per penduduk.
