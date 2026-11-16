@@ -65,6 +65,18 @@ def test_sankey_seimbang_dan_tanpa_tautan_nol(apbd_mini):
     assert ke_pad == 40
 
 
+def test_sankey_melewati_nilai_kosong(apbd_mini):
+    import pandas as pd
+
+    df = apbd_mini.copy()
+    df["realisasi"] = df["realisasi"].astype("Float64")
+    df.loc[df["akun"] == "Belanja Modal", "realisasi"] = pd.NA
+    df.loc[df["akun"] == "Pajak Daerah", "realisasi"] = float("nan")
+    s = analisis.aliran_sankey(df, "11", 2024)
+    assert "Belanja Modal" not in s["label"]
+    assert all(v > 0 for v in s["nilai"])
+
+
 def test_pertumbuhan_tahunan():
     import pandas as pd
 
