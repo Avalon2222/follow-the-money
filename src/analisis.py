@@ -118,10 +118,18 @@ def tambah_rasio(lebar: pd.DataFrame) -> pd.DataFrame:
 
 
 def tambah_pertumbuhan(lebar: pd.DataFrame, kolom: str = "belanja") -> pd.DataFrame:
-    """Pertumbuhan tahunan (%) kolom tertentu per provinsi."""
+    """Pertumbuhan tahunan (%) kolom tertentu per provinsi.
+
+    Hanya dihitung bila baris sebelumnya memang tahun tepat sebelumnya. Kalau ada
+    tahun yang bolong (misalnya 2022 lalu 2024), hasilnya NaN, bukan pertumbuhan
+    dua tahun yang tampil seolah-olah setahun.
+    """
     df = lebar.sort_values(["kode_bps", "tahun"]).copy()
-    sebelumnya = df.groupby("kode_bps")[kolom].shift(1)
-    df[f"pertumbuhan_{kolom}"] = (df[kolom] / sebelumnya.where(sebelumnya != 0) - 1) * 100
+    grup = df.groupby("kode_bps")
+    sebelumnya = grup[kolom].shift(1)
+    tahun_lalu = grup["tahun"].shift(1)
+    sebelumnya = sebelumnya.where((sebelumnya != 0) & (df["tahun"] - tahun_lalu == 1))
+    df[f"pertumbuhan_{kolom}"] = (df[kolom] / sebelumnya - 1) * 100
     return df
 
 

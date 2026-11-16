@@ -76,6 +76,16 @@ def test_pertumbuhan_tahunan():
     assert nilai[2] == pytest.approx(-10.0)
 
 
+def test_pertumbuhan_tahun_bolong_tidak_dianggap_setahun():
+    import pandas as pd
+
+    df = pd.DataFrame({"kode_bps": ["11", "11", "12", "12"], "tahun": [2022, 2024, 2023, 2024],
+                       "belanja": [100.0, 121.0, 50.0, 55.0]})
+    hasil = analisis.tambah_pertumbuhan(df).set_index(["kode_bps", "tahun"])["pertumbuhan_belanja"]
+    assert math.isnan(hasil[("11", 2024)])
+    assert hasil[("12", 2024)] == pytest.approx(10.0)
+
+
 def test_komposisi_belanja_berjumlah_100_persen(apbd_mini, penduduk_mini):
     lebar = analisis.tabel_lebar(apbd_mini, penduduk_mini)
     panjang = analisis.komposisi_belanja(lebar)
