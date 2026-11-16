@@ -27,3 +27,17 @@ def test_persen_dan_orang():
     assert fmt.persen(37.456) == "37,5 %"
     assert fmt.orang(50_759_000) == "50,76 juta jiwa"
     assert fmt.orang(549_700) == "550 ribu jiwa"
+
+
+def test_nilai_pd_na_juga_menjadi_strip():
+    import pandas as pd
+
+    assert fmt.angka_id(pd.NA) == "-"
+    assert fmt.rupiah(pd.NA) == "-"
+    assert fmt.persen(pd.NA) == "-"
+    assert fmt.orang(pd.NA) == "-"
+
+
+def test_orang_di_bawah_seribu_tetap_terbaca():
+    assert fmt.orang(450) == "450 jiwa"
+    assert fmt.orang(1_000) == "1 ribu jiwa"
