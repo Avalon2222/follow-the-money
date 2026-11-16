@@ -216,5 +216,8 @@ def agregat_pulau(lebar_tahun: pd.DataFrame) -> pd.DataFrame:
     """Jumlah pendapatan, belanja, TKD, dan penduduk per pulau besar beserta rasionya."""
     kolom = ["pendapatan", "belanja", "pad", "tkdd", "belanja_modal", "belanja_pegawai",
              "belanja_barang", "belanja_lainnya", "penduduk"]
-    g = lebar_tahun.groupby("pulau", as_index=False)[kolom].sum()
+    # Provinsi yang belum terpetakan ke pulau tetap dihitung, jangan sampai
+    # hilang diam-diam karena groupby membuang NaN.
+    df = lebar_tahun.assign(pulau=lebar_tahun["pulau"].fillna("Lainnya"))
+    g = df.groupby("pulau", as_index=False)[kolom].sum()
     return tambah_rasio(g)
