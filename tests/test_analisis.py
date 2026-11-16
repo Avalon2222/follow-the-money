@@ -105,6 +105,18 @@ def test_agregat_pulau_menjumlahkan_dan_menghitung_rasio(apbd, penduduk):
     assert jawa["kemandirian"] > pulau.loc["Papua", "kemandirian"]
 
 
+def test_agregat_pulau_tidak_membuang_pulau_kosong():
+    import pandas as pd
+
+    kolom = ["pendapatan", "belanja", "pad", "tkdd", "belanja_modal", "belanja_pegawai",
+             "belanja_barang", "belanja_lainnya", "penduduk"]
+    df = pd.DataFrame([[100.0] * len(kolom), [50.0] * len(kolom)], columns=kolom)
+    df["pulau"] = ["Jawa", None]
+    pulau = analisis.agregat_pulau(df).set_index("pulau")
+    assert pulau["belanja"].sum() == pytest.approx(150.0)
+    assert pulau.loc["Lainnya", "belanja"] == pytest.approx(50.0)
+
+
 def test_metrik_terdaftar_ada_di_tabel(apbd, penduduk):
     lebar = analisis.tabel_lebar(apbd, penduduk)
     for kunci in analisis.METRIK:
