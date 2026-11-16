@@ -1,12 +1,20 @@
 """Pemformatan angka ala Indonesia: titik untuk ribuan, koma untuk desimal."""
 from __future__ import annotations
 
-import math
+import pandas as pd
+
+
+def _kosong(nilai) -> bool:
+    """True untuk None, NaN, NaT, dan pd.NA."""
+    try:
+        return bool(pd.isna(nilai))
+    except (TypeError, ValueError):
+        return False
 
 
 def angka_id(nilai: float, desimal: int = 1) -> str:
     """Memformat angka dengan pemisah ribuan '.' dan desimal ','."""
-    if nilai is None or (isinstance(nilai, float) and math.isnan(nilai)):
+    if _kosong(nilai):
         return "-"
     teks = f"{nilai:,.{desimal}f}"
     return teks.replace(",", "\u0000").replace(".", ",").replace("\u0000", ".")
@@ -20,7 +28,7 @@ def rupiah(nilai: float, desimal: int = 1) -> str:
     >>> rupiah(45_200_000_000)
     'Rp 45,2 M'
     """
-    if nilai is None or (isinstance(nilai, float) and math.isnan(nilai)):
+    if _kosong(nilai):
         return "-"
     tanda = "-" if nilai < 0 else ""
     n = abs(nilai)
@@ -32,14 +40,14 @@ def rupiah(nilai: float, desimal: int = 1) -> str:
 
 def persen(nilai: float, desimal: int = 1) -> str:
     """Persentase dengan koma desimal, misal 37,4 %."""
-    if nilai is None or (isinstance(nilai, float) and math.isnan(nilai)):
+    if _kosong(nilai):
         return "-"
     return f"{angka_id(nilai, desimal)} %"
 
 
 def orang(nilai: float) -> str:
     """Jumlah penduduk dalam juta atau ribu jiwa."""
-    if nilai is None or (isinstance(nilai, float) and math.isnan(nilai)):
+    if _kosong(nilai):
         return "-"
     if nilai >= 1e6:
         return f"{angka_id(nilai / 1e6, 2)} juta jiwa"
