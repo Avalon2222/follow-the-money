@@ -176,7 +176,8 @@ def aliran_sankey(apbd: pd.DataFrame, kode_bps: str, tahun: int, basis: str = "r
     sumber, tujuan, jumlah = [], [], []
 
     def tautan(a: str, b: str, v: float) -> None:
-        if v and v > 0:
+        # pd.isna dulu: `pd.NA and ...` melempar TypeError, NaN juga harus dilewati.
+        if not pd.isna(v) and v > 0:
             sumber.append(simpul(a))
             tujuan.append(simpul(b))
             jumlah.append(float(v))
