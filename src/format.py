@@ -51,4 +51,6 @@ def orang(nilai: float) -> str:
         return "-"
     if nilai >= 1e6:
         return f"{angka_id(nilai / 1e6, 2)} juta jiwa"
-    return f"{angka_id(nilai / 1e3, 0)} ribu jiwa"
+    if nilai >= 1e3:
+        return f"{angka_id(nilai / 1e3, 0)} ribu jiwa"
+    return f"{angka_id(nilai, 0)} jiwa"
