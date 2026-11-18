@@ -66,3 +66,10 @@ def test_tak_hingga_menjadi_strip():
     assert fmt.persen(-math.inf) == "-"
     assert fmt.orang(math.inf) == "-"
     assert fmt.angka_id(math.inf) == "-"
+
+
+def test_angka_dan_persen_minus_kecil_tidak_jadi_minus_nol():
+    assert fmt.angka_id(-0.04, 1) == "0,0"
+    assert fmt.angka_id(-0.4, 0) == "0"
+    assert fmt.persen(-0.04) == "0,0 %"
+    assert fmt.angka_id(-1234.5, 1) == "-1.234,5"

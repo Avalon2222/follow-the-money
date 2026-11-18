@@ -24,6 +24,9 @@ def angka_id(nilai: float, desimal: int = 1) -> str:
     if _kosong(nilai):
         return "-"
     teks = f"{nilai:,.{desimal}f}"
+    # -0,04 dibulatkan jadi "-0,0"; minus nol tidak ada artinya, jadi tandanya dibuang.
+    if teks.startswith("-") and float(teks[1:].replace(",", "")) == 0:
+        teks = teks[1:]
     return teks.replace(",", "\u0000").replace(".", ",").replace("\u0000", ".")
 
 
