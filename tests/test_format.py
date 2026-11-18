@@ -41,3 +41,10 @@ def test_nilai_pd_na_juga_menjadi_strip():
 def test_orang_di_bawah_seribu_tetap_terbaca():
     assert fmt.orang(450) == "450 jiwa"
     assert fmt.orang(1_000) == "1 ribu jiwa"
+
+
+def test_rupiah_naik_satuan_saat_pembulatan_mencapai_seribu():
+    assert fmt.rupiah(999_960_000_000) == "Rp 1,0 T"
+    assert fmt.rupiah(999_960_000) == "Rp 1,0 M"
+    assert fmt.rupiah(999.6) == "Rp 1,0 rb"
+    assert fmt.rupiah(999_940_000) == "Rp 999,9 jt"
