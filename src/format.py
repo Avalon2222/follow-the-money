@@ -30,7 +30,6 @@ def rupiah(nilai: float, desimal: int = 1) -> str:
     """
     if _kosong(nilai):
         return "-"
-    tanda = "-" if nilai < 0 else ""
     n = abs(nilai)
     satuan_ringkas = ((1e12, "T"), (1e9, "M"), (1e6, "jt"), (1e3, "rb"), (1.0, ""))
     for i, (batas, satuan) in enumerate(satuan_ringkas):
@@ -40,7 +39,10 @@ def rupiah(nilai: float, desimal: int = 1) -> str:
             if i > 0 and round(n / batas, angka) >= 1000:
                 batas, satuan = satuan_ringkas[i - 1]
                 angka = desimal
-            return f"{tanda}Rp {angka_id(n / batas, angka)}{' ' + satuan if satuan else ''}"
+            teks = angka_id(n / batas, angka)
+            # Minus kecil yang dibulatkan jadi nol tidak perlu tanda "-".
+            tanda = "-" if nilai < 0 and round(n / batas, angka) != 0 else ""
+            return f"{tanda}Rp {teks}{' ' + satuan if satuan else ''}"
 
 
 def persen(nilai: float, desimal: int = 1) -> str:
