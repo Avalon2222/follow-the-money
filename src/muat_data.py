@@ -27,7 +27,10 @@ def muat_penduduk(path: Path | None = None) -> pd.DataFrame:
     """Penduduk (proyeksi pertengahan 2025) dan luas wilayah per provinsi."""
     path = path or FOLDER_DATA / "penduduk_provinsi.csv"
     df = pd.read_csv(path, dtype={"kode_bps": str})
-    df["penduduk_2025"] = df["penduduk_2025"].astype("int64")
+    # Penduduk kosong dibiarkan NaN (rasio per kapita jadi "-"), tidak membuat astype gagal.
+    penduduk = pd.to_numeric(df["penduduk_2025"], errors="coerce")
+    df["penduduk_2025"] = penduduk.astype("int64") if penduduk.notna().all() else penduduk
+    df["kode_bps"] = df["kode_bps"].str.strip()
     return df
 
 
