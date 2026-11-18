@@ -146,3 +146,9 @@ def test_data_nyata_masuk_akal(apbd, penduduk):
     assert 1.2e15 < th["pendapatan"].sum() < 1.6e15
     # DKI Jakarta adalah provinsi paling mandiri secara fiskal
     assert analisis.peringkat(th, "kemandirian", n=1)["provinsi"].iloc[0] == "DKI Jakarta"
+
+
+def test_peringkat_n_nol_mengembalikan_tabel_kosong(apbd_mini, penduduk_mini):
+    lebar = analisis.tabel_lebar(apbd_mini, penduduk_mini)
+    assert analisis.peringkat(lebar, "belanja", n=0).empty
+    assert len(analisis.peringkat(lebar, "belanja")) == 2

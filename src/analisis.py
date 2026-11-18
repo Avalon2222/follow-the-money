@@ -153,7 +153,8 @@ def peringkat(lebar_tahun: pd.DataFrame, metrik: str, n: int | None = None, terb
     """Mengurutkan provinsi menurut sebuah metrik dan memberi nomor peringkat."""
     df = lebar_tahun.dropna(subset=[metrik]).sort_values(metrik, ascending=not terbesar).copy()
     df["peringkat"] = range(1, len(df) + 1)
-    return df.head(n) if n else df
+    # n=0 berarti nol baris, bukan semua; hanya None yang berarti tanpa batas.
+    return df if n is None else df.head(max(n, 0))
 
 
 def aliran_sankey(apbd: pd.DataFrame, kode_bps: str, tahun: int, basis: str = "realisasi") -> dict:
