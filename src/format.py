@@ -56,8 +56,9 @@ def orang(nilai: float) -> str:
     """Jumlah penduduk dalam juta atau ribu jiwa."""
     if _kosong(nilai):
         return "-"
-    if nilai >= 1e6:
+    # 999.600 jiwa dibulatkan jadi "1.000 ribu"; lebih enak dibaca dalam juta.
+    if nilai >= 1e6 or round(nilai / 1e3) >= 1000:
         return f"{angka_id(nilai / 1e6, 2)} juta jiwa"
-    if nilai >= 1e3:
+    if nilai >= 1e3 or round(nilai) >= 1000:
         return f"{angka_id(nilai / 1e3, 0)} ribu jiwa"
     return f"{angka_id(nilai, 0)} jiwa"

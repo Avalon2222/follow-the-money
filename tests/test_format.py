@@ -53,3 +53,9 @@ def test_rupiah_naik_satuan_saat_pembulatan_mencapai_seribu():
 def test_rupiah_minus_kecil_tidak_jadi_minus_nol():
     assert fmt.rupiah(-0.4) == "Rp 0"
     assert fmt.rupiah(-0.6) == "-Rp 1"
+
+
+def test_orang_hampir_sejuta_ditulis_dalam_juta():
+    assert fmt.orang(999_600) == "1,00 juta jiwa"
+    assert fmt.orang(999_400) == "999 ribu jiwa"
+    assert fmt.orang(999.7) == "1 ribu jiwa"
