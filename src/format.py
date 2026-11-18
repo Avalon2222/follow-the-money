@@ -32,10 +32,15 @@ def rupiah(nilai: float, desimal: int = 1) -> str:
         return "-"
     tanda = "-" if nilai < 0 else ""
     n = abs(nilai)
-    for batas, satuan in ((1e12, "T"), (1e9, "M"), (1e6, "jt"), (1e3, "rb")):
-        if n >= batas:
-            return f"{tanda}Rp {angka_id(n / batas, desimal)} {satuan}"
-    return f"{tanda}Rp {angka_id(n, 0)}"
+    satuan_ringkas = ((1e12, "T"), (1e9, "M"), (1e6, "jt"), (1e3, "rb"), (1.0, ""))
+    for i, (batas, satuan) in enumerate(satuan_ringkas):
+        if n >= batas or batas == 1.0:
+            angka = desimal if satuan else 0
+            # 999,96 M dibulatkan jadi "1.000,0 M"; naikkan ke satuan berikutnya.
+            if i > 0 and round(n / batas, angka) >= 1000:
+                batas, satuan = satuan_ringkas[i - 1]
+                angka = desimal
+            return f"{tanda}Rp {angka_id(n / batas, angka)}{' ' + satuan if satuan else ''}"
 
 
 def persen(nilai: float, desimal: int = 1) -> str:
