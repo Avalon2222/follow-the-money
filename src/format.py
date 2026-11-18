@@ -1,14 +1,21 @@
 """Pemformatan angka ala Indonesia: titik untuk ribuan, koma untuk desimal."""
 from __future__ import annotations
 
+import math
+
 import pandas as pd
 
 
 def _kosong(nilai) -> bool:
-    """True untuk None, NaN, NaT, dan pd.NA."""
+    """True untuk None, NaN, NaT, pd.NA, dan tak hingga (hasil bagi dengan nol)."""
     try:
-        return bool(pd.isna(nilai))
+        if pd.isna(nilai):
+            return True
     except (TypeError, ValueError):
+        return False
+    try:
+        return math.isinf(nilai)
+    except TypeError:
         return False
 
 

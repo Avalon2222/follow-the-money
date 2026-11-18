@@ -59,3 +59,10 @@ def test_orang_hampir_sejuta_ditulis_dalam_juta():
     assert fmt.orang(999_600) == "1,00 juta jiwa"
     assert fmt.orang(999_400) == "999 ribu jiwa"
     assert fmt.orang(999.7) == "1 ribu jiwa"
+
+
+def test_tak_hingga_menjadi_strip():
+    assert fmt.rupiah(math.inf) == "-"
+    assert fmt.persen(-math.inf) == "-"
+    assert fmt.orang(math.inf) == "-"
+    assert fmt.angka_id(math.inf) == "-"
