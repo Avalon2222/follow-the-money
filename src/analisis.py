@@ -87,7 +87,9 @@ def tabel_lebar(apbd: pd.DataFrame, penduduk: pd.DataFrame, basis: str = "realis
     pasang.columns = [f"{a}_{'belanja' if b == 'Belanja Daerah' else 'pendapatan'}" for a, b in pasang.columns]
     lebar = lebar.merge(pasang.reset_index(), on=["kode_bps", "tahun"], how="left")
 
-    lebar = lebar.merge(penduduk[["kode_bps", "penduduk_2025", "luas_km2"]], on="kode_bps", how="left")
+    # Baris penduduk ganda akan menggandakan provinsi saat merge (dan total nasional ikut dobel).
+    pend = penduduk.drop_duplicates("kode_bps", keep="last")[["kode_bps", "penduduk_2025", "luas_km2"]]
+    lebar = lebar.merge(pend, on="kode_bps", how="left")
     lebar = lebar.rename(columns={"penduduk_2025": "penduduk"})
     lebar["pulau"] = lebar["kode_bps"].map(PULAU)
     return tambah_rasio(lebar)

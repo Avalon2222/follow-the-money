@@ -152,3 +152,12 @@ def test_peringkat_n_nol_mengembalikan_tabel_kosong(apbd_mini, penduduk_mini):
     lebar = analisis.tabel_lebar(apbd_mini, penduduk_mini)
     assert analisis.peringkat(lebar, "belanja", n=0).empty
     assert len(analisis.peringkat(lebar, "belanja")) == 2
+
+
+def test_penduduk_ganda_tidak_menggandakan_provinsi(apbd_mini, penduduk_mini):
+    import pandas as pd
+
+    ganda = pd.concat([penduduk_mini, penduduk_mini.iloc[[0]]], ignore_index=True)
+    lebar = analisis.tabel_lebar(apbd_mini, ganda)
+    assert len(lebar) == len(analisis.tabel_lebar(apbd_mini, penduduk_mini))
+    assert not lebar.duplicated(["kode_bps", "tahun"]).any()
