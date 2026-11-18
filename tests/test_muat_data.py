@@ -39,3 +39,12 @@ def test_nama_provinsi_konsisten_antar_tabel(apbd, penduduk, geojson):
     assert nama_geo == skema.NAMA_PROVINSI
     assert nama_pend == skema.NAMA_PROVINSI
     assert nama_apbd == skema.NAMA_PROVINSI
+
+
+def test_penduduk_kosong_tidak_menggagalkan_pemuatan(tmp_path):
+    path = tmp_path / "penduduk.csv"
+    path.write_text("kode_bps,provinsi,penduduk_2025,luas_km2\n 11,A,,10\n12,B,2000,5\n", encoding="utf-8")
+    df = muat_data.muat_penduduk(path)
+    assert list(df["kode_bps"]) == ["11", "12"]
+    assert df["penduduk_2025"].isna().iloc[0]
+    assert df["penduduk_2025"].iloc[1] == 2000
