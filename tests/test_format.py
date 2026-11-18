@@ -48,3 +48,8 @@ def test_rupiah_naik_satuan_saat_pembulatan_mencapai_seribu():
     assert fmt.rupiah(999_960_000) == "Rp 1,0 M"
     assert fmt.rupiah(999.6) == "Rp 1,0 rb"
     assert fmt.rupiah(999_940_000) == "Rp 999,9 jt"
+
+
+def test_rupiah_minus_kecil_tidak_jadi_minus_nol():
+    assert fmt.rupiah(-0.4) == "Rp 0"
+    assert fmt.rupiah(-0.6) == "-Rp 1"
