@@ -173,3 +173,9 @@ def test_ringkasan_nasional_per_kapita_abaikan_provinsi_tanpa_penduduk():
     assert hasil["belanja"] == 400.0
     # Hanya provinsi pertama yang punya penduduk: 100 / 10, bukan 400 / 10.
     assert hasil["belanja_per_kapita"] == 10.0
+
+
+def test_peringkat_nilai_sama_berbagi_nomor():
+    df = pd.DataFrame({"provinsi": ["A", "B", "C", "D"], "kemandirian": [50.0, 30.0, 30.0, 10.0]})
+    assert analisis.peringkat(df, "kemandirian")["peringkat"].tolist() == [1, 2, 2, 4]
+    assert analisis.peringkat(df, "kemandirian", terbesar=False)["peringkat"].tolist() == [1, 2, 2, 4]
