@@ -179,3 +179,10 @@ def test_peringkat_nilai_sama_berbagi_nomor():
     df = pd.DataFrame({"provinsi": ["A", "B", "C", "D"], "kemandirian": [50.0, 30.0, 30.0, 10.0]})
     assert analisis.peringkat(df, "kemandirian")["peringkat"].tolist() == [1, 2, 2, 4]
     assert analisis.peringkat(df, "kemandirian", terbesar=False)["peringkat"].tolist() == [1, 2, 2, 4]
+
+
+def test_pertumbuhan_basis_negatif_arahnya_benar():
+    df = pd.DataFrame({"kode_bps": ["11"] * 3, "tahun": [2022, 2023, 2024], "surplus": [-10.0, -5.0, 5.0]})
+    hasil = analisis.tambah_pertumbuhan(df, "surplus")["pertumbuhan_surplus"].tolist()
+    assert math.isnan(hasil[0])
+    assert hasil[1:] == [50.0, 200.0]

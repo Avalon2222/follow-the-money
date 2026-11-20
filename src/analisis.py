@@ -131,7 +131,8 @@ def tambah_pertumbuhan(lebar: pd.DataFrame, kolom: str = "belanja") -> pd.DataFr
     sebelumnya = grup[kolom].shift(1)
     tahun_lalu = grup["tahun"].shift(1)
     sebelumnya = sebelumnya.where((sebelumnya != 0) & (df["tahun"] - tahun_lalu == 1))
-    df[f"pertumbuhan_{kolom}"] = (df[kolom] / sebelumnya - 1) * 100
+    # Dibagi nilai mutlak agar arahnya benar saat basisnya negatif (mis. surplus -10 -> -5 = naik 50%).
+    df[f"pertumbuhan_{kolom}"] = (df[kolom] - sebelumnya) / sebelumnya.abs() * 100
     return df
 
 
