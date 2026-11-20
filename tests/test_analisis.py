@@ -186,3 +186,17 @@ def test_pertumbuhan_basis_negatif_arahnya_benar():
     hasil = analisis.tambah_pertumbuhan(df, "surplus")["pertumbuhan_surplus"].tolist()
     assert math.isnan(hasil[0])
     assert hasil[1:] == [50.0, 200.0]
+
+
+def test_agregat_pulau_per_kapita_abaikan_provinsi_tanpa_penduduk():
+    nol = [0.0, 0.0, 0.0]
+    lebar = pd.DataFrame({
+        "pulau": ["Jawa", "Jawa", "Bali"], "pendapatan": [50.0, 70.0, 30.0], "belanja": [100.0, 300.0, 60.0],
+        "pad": nol, "tkdd": [20.0, 40.0, 10.0], "belanja_modal": nol, "belanja_pegawai": nol,
+        "belanja_barang": nol, "belanja_lainnya": nol, "penduduk": [10.0, float("nan"), 0.0],
+    })
+    hasil = analisis.agregat_pulau(lebar).set_index("pulau")
+    assert hasil.loc["Jawa", "belanja"] == 400.0
+    assert hasil.loc["Jawa", "belanja_per_kapita"] == 10.0
+    assert hasil.loc["Jawa", "tkdd_per_kapita"] == 2.0
+    assert math.isnan(hasil.loc["Bali", "belanja_per_kapita"])

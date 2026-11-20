@@ -230,4 +230,10 @@ def agregat_pulau(lebar_tahun: pd.DataFrame) -> pd.DataFrame:
     # hilang diam-diam karena groupby membuang NaN.
     df = lebar_tahun.assign(pulau=lebar_tahun["pulau"].fillna("Lainnya"))
     g = df.groupby("pulau", as_index=False)[kolom].sum()
-    return tambah_rasio(g)
+    hasil = tambah_rasio(g)
+    # Per kapita hanya dari provinsi yang punya data penduduk, sama seperti ringkasan_nasional.
+    berpenduduk = df[df["penduduk"].notna()].groupby("pulau")[["belanja", "pendapatan", "tkdd"]].sum()
+    penduduk = hasil["penduduk"].where(hasil["penduduk"] != 0)
+    for k in ["belanja", "pendapatan", "tkdd"]:
+        hasil[f"{k}_per_kapita"] = (hasil["pulau"].map(berpenduduk[k]) / penduduk).astype(float)
+    return hasil
