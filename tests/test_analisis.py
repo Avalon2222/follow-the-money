@@ -1,5 +1,6 @@
 import math
 
+import pandas as pd
 import pytest
 
 from src import analisis
@@ -161,3 +162,14 @@ def test_penduduk_ganda_tidak_menggandakan_provinsi(apbd_mini, penduduk_mini):
     lebar = analisis.tabel_lebar(apbd_mini, ganda)
     assert len(lebar) == len(analisis.tabel_lebar(apbd_mini, penduduk_mini))
     assert not lebar.duplicated(["kode_bps", "tahun"]).any()
+
+
+def test_ringkasan_nasional_per_kapita_abaikan_provinsi_tanpa_penduduk():
+    lebar = pd.DataFrame({
+        "pendapatan": [100.0, 100.0], "belanja": [100.0, 300.0], "pad": [10.0, 10.0], "tkdd": [80.0, 80.0],
+        "belanja_modal": [20.0, 20.0], "belanja_pegawai": [30.0, 30.0], "penduduk": [10.0, float("nan")],
+    })
+    hasil = analisis.ringkasan_nasional(lebar)
+    assert hasil["belanja"] == 400.0
+    # Hanya provinsi pertama yang punya penduduk: 100 / 10, bukan 400 / 10.
+    assert hasil["belanja_per_kapita"] == 10.0
