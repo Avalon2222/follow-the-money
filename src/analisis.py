@@ -157,8 +157,9 @@ def ringkasan_nasional(lebar_tahun: pd.DataFrame) -> dict[str, float]:
 
 def peringkat(lebar_tahun: pd.DataFrame, metrik: str, n: int | None = None, terbesar: bool = True) -> pd.DataFrame:
     """Mengurutkan provinsi menurut sebuah metrik dan memberi nomor peringkat."""
-    df = lebar_tahun.dropna(subset=[metrik]).sort_values(metrik, ascending=not terbesar).copy()
-    df["peringkat"] = range(1, len(df) + 1)
+    df = lebar_tahun.dropna(subset=[metrik]).sort_values(metrik, ascending=not terbesar, kind="stable").copy()
+    # Nilai yang sama berbagi peringkat (1, 2, 2, 4), tidak bergantung urutan baris.
+    df["peringkat"] = df[metrik].rank(method="min", ascending=not terbesar).astype(int)
     # n=0 berarti nol baris, bukan semua; hanya None yang berarti tanpa batas.
     return df if n is None else df.head(max(n, 0))
 
