@@ -138,6 +138,10 @@ def tambah_pertumbuhan(lebar: pd.DataFrame, kolom: str = "belanja") -> pd.DataFr
 def ringkasan_nasional(lebar_tahun: pd.DataFrame) -> dict[str, float]:
     """Agregat seluruh provinsi untuk satu tahun."""
     total = lebar_tahun[["pendapatan", "belanja", "pad", "tkdd", "belanja_modal", "belanja_pegawai", "penduduk"]].sum()
+    # Provinsi tanpa data penduduk tidak boleh ikut menyumbang belanja ke pembilang per kapita,
+    # karena penduduknya tidak ada di penyebut (hasilnya jadi terlalu besar).
+    berpenduduk = lebar_tahun[lebar_tahun["penduduk"].notna()]
+    belanja_berpenduduk = berpenduduk["belanja"].sum()
     return {
         "pendapatan": float(total["pendapatan"]),
         "belanja": float(total["belanja"]),
@@ -147,7 +151,7 @@ def ringkasan_nasional(lebar_tahun: pd.DataFrame) -> dict[str, float]:
         "kemandirian": float(total["pad"] / total["pendapatan"] * 100) if total["pendapatan"] else float("nan"),
         "porsi_modal": float(total["belanja_modal"] / total["belanja"] * 100) if total["belanja"] else float("nan"),
         "porsi_pegawai": float(total["belanja_pegawai"] / total["belanja"] * 100) if total["belanja"] else float("nan"),
-        "belanja_per_kapita": float(total["belanja"] / total["penduduk"]) if total["penduduk"] else float("nan"),
+        "belanja_per_kapita": float(belanja_berpenduduk / total["penduduk"]) if total["penduduk"] else float("nan"),
     }
 
 
