@@ -1,4 +1,5 @@
 import folium
+import pandas as pd
 
 from src import analisis, peta
 
@@ -35,3 +36,13 @@ def test_buat_peta_dengan_data_nyata_menghasilkan_folium_map(apbd, penduduk, geo
     html = m.get_root().render()
     assert "Belanja per Penduduk" in html
     assert "Papua Pegunungan" in html
+
+
+def test_sematkan_properti_kode_ganda_tidak_gagal(apbd_mini, penduduk_mini):
+    lebar = analisis.tabel_lebar(apbd_mini, penduduk_mini)
+    ganda = pd.concat([lebar, lebar[lebar["kode_bps"] == "11"]], ignore_index=True)
+    geo = {"type": "FeatureCollection", "features": [
+        {"type": "Feature", "id": "11", "properties": {"kode_bps": "11", "provinsi": "A"}, "geometry": None},
+    ]}
+    hasil = peta.sematkan_properti(geo, ganda, "kemandirian")
+    assert hasil["features"][0]["properties"]["nilai"] == "40,0 %"
