@@ -171,7 +171,8 @@ def aliran_sankey(apbd: pd.DataFrame, kode_bps: str, tahun: int, basis: str = "r
     Mengembalikan dict {"label": [...], "sumber": [...], "tujuan": [...], "nilai": [...]}.
     """
     df = apbd[(apbd["kode_bps"] == kode_bps) & (apbd["tahun"] == tahun)]
-    nilai = dict(zip(df["akun"], df[basis]))
+    # Dijumlahkan seperti pivot di tabel_lebar; dict(zip()) diam-diam hanya menyimpan baris terakhir.
+    nilai = df.groupby("akun")[basis].sum(min_count=1).to_dict()
     kas = "Kas Daerah"
     label_simpul: list[str] = []
     indeks: dict[str, int] = {}

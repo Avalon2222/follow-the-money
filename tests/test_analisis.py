@@ -200,3 +200,17 @@ def test_agregat_pulau_per_kapita_abaikan_provinsi_tanpa_penduduk():
     assert hasil.loc["Jawa", "belanja_per_kapita"] == 10.0
     assert hasil.loc["Jawa", "tkdd_per_kapita"] == 2.0
     assert math.isnan(hasil.loc["Bali", "belanja_per_kapita"])
+
+
+def test_sankey_akun_ganda_dijumlahkan_seperti_tabel_lebar(apbd_mini):
+    import pandas as pd
+
+    # Belanja Modal tercatat dua kali (16 + 4); tabel_lebar menjumlahkannya jadi 20.
+    tambahan = apbd_mini[(apbd_mini["kode_bps"] == "11") & (apbd_mini["akun"] == "Belanja Modal")].copy()
+    tambahan["realisasi"] = 4
+    df = pd.concat([apbd_mini, tambahan], ignore_index=True)
+    s = analisis.aliran_sankey(df, "11", 2024)
+    kas = s["label"].index("Kas Daerah")
+    modal = s["label"].index("Belanja Modal")
+    nilai = [v for a, b, v in zip(s["sumber"], s["tujuan"], s["nilai"]) if a == kas and b == modal]
+    assert nilai == [20.0]
