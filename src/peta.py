@@ -25,7 +25,8 @@ def format_nilai(nilai: float, satuan: str) -> str:
 def sematkan_properti(geojson: dict, lebar_tahun: pd.DataFrame, metrik: str) -> dict:
     """Menyalin GeoJSON dan menambahkan nilai terformat ke properti setiap provinsi."""
     g = copy.deepcopy(geojson)
-    baris = lebar_tahun.set_index("kode_bps")
+    # Kode ganda membuat baris.loc[kode] berupa DataFrame dan pemformatan gagal; pakai baris terakhir.
+    baris = lebar_tahun.drop_duplicates("kode_bps", keep="last").set_index("kode_bps")
     m = METRIK[metrik]
     for f in g["features"]:
         kode = f["properties"]["kode_bps"]
