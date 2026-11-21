@@ -67,8 +67,6 @@ def test_sankey_seimbang_dan_tanpa_tautan_nol(apbd_mini):
 
 
 def test_sankey_melewati_nilai_kosong(apbd_mini):
-    import pandas as pd
-
     df = apbd_mini.copy()
     df["realisasi"] = df["realisasi"].astype("Float64")
     df.loc[df["akun"] == "Belanja Modal", "realisasi"] = pd.NA
@@ -203,8 +201,6 @@ def test_agregat_pulau_per_kapita_abaikan_provinsi_tanpa_penduduk():
 
 
 def test_sankey_akun_ganda_dijumlahkan_seperti_tabel_lebar(apbd_mini):
-    import pandas as pd
-
     # Belanja Modal tercatat dua kali (16 + 4); tabel_lebar menjumlahkannya jadi 20.
     tambahan = apbd_mini[(apbd_mini["kode_bps"] == "11") & (apbd_mini["akun"] == "Belanja Modal")].copy()
     tambahan["realisasi"] = 4
