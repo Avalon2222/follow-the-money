@@ -16,6 +16,8 @@ def muat_apbd(path: Path | None = None) -> pd.DataFrame:
     """Tabel rapi APBD: satu baris per (provinsi, tahun, akun)."""
     path = path or FOLDER_DATA / "apbd_provinsi.csv"
     df = pd.read_csv(path, dtype={"kode_bps": str, "induk": str})
+    # Sama seperti muat_penduduk: kode " 11" harus tetap cocok dengan skema pulau dan GeoJSON.
+    df["kode_bps"] = df["kode_bps"].str.strip()
     df["induk"] = df["induk"].fillna("")
     df["tahun"] = df["tahun"].astype(int)
     df["tingkat"] = df["tingkat"].astype(int)
