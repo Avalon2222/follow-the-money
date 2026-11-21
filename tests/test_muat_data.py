@@ -48,3 +48,15 @@ def test_penduduk_kosong_tidak_menggagalkan_pemuatan(tmp_path):
     assert list(df["kode_bps"]) == ["11", "12"]
     assert df["penduduk_2025"].isna().iloc[0]
     assert df["penduduk_2025"].iloc[1] == 2000
+
+
+def test_kode_apbd_berspasi_tetap_dapat_pulau(tmp_path):
+    path = tmp_path / "apbd.csv"
+    path.write_text(
+        "kode_bps,provinsi,tahun,akun,induk,tingkat,anggaran,realisasi\n"
+        " 11 ,Aceh,2024,Pendapatan Daerah,,1,10,9\n",
+        encoding="utf-8",
+    )
+    df = muat_data.muat_apbd(path)
+    assert df["kode_bps"].iloc[0] == "11"
+    assert df["pulau"].iloc[0] == "Sumatera"
