@@ -210,3 +210,10 @@ def test_sankey_akun_ganda_dijumlahkan_seperti_tabel_lebar(apbd_mini):
     modal = s["label"].index("Belanja Modal")
     nilai = [v for a, b, v in zip(s["sumber"], s["tujuan"], s["nilai"]) if a == kas and b == modal]
     assert nilai == [20.0]
+
+
+def test_tabel_lebar_tanpa_baris_pendapatan_tidak_error(apbd_mini, penduduk_mini):
+    hanya_belanja = apbd_mini[apbd_mini["akun"] != "Pendapatan Daerah"]
+    lebar = analisis.tabel_lebar(hanya_belanja, penduduk_mini)
+    assert "serapan_belanja" in lebar
+    assert "capaian_pendapatan" not in lebar
