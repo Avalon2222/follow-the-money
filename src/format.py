@@ -23,6 +23,8 @@ def angka_id(nilai: float, desimal: int = 1) -> str:
     """Memformat angka dengan pemisah ribuan '.' dan desimal ','."""
     if _kosong(nilai):
         return "-"
+    # Format string tidak menerima presisi negatif (",.-1f" -> ValueError).
+    desimal = max(int(desimal), 0)
     teks = f"{nilai:,.{desimal}f}"
     # -0,04 dibulatkan jadi "-0,0"; minus nol tidak ada artinya, jadi tandanya dibuang.
     if teks.startswith("-") and float(teks[1:].replace(",", "")) == 0:
