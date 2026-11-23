@@ -60,3 +60,16 @@ def test_kode_apbd_berspasi_tetap_dapat_pulau(tmp_path):
     df = muat_data.muat_apbd(path)
     assert df["kode_bps"].iloc[0] == "11"
     assert df["pulau"].iloc[0] == "Sumatera"
+
+
+def test_nama_akun_berspasi_dan_ejaan_lain_dirapikan(tmp_path):
+    path = tmp_path / "apbd.csv"
+    path.write_text(
+        "kode_bps,provinsi,tahun,akun,induk,tingkat,anggaran,realisasi\n"
+        "11,Aceh,2024, Belanja Daerah ,,1,10,9\n"
+        "11,Aceh,2024,Belanja Barang Jasa,Belanja Daerah ,2,4,3\n",
+        encoding="utf-8",
+    )
+    df = muat_data.muat_apbd(path)
+    assert df["akun"].tolist() == ["Belanja Daerah", "Belanja Barang dan Jasa"]
+    assert df["induk"].tolist() == ["", "Belanja Daerah"]
