@@ -112,8 +112,10 @@ def tambah_rasio(lebar: pd.DataFrame) -> pd.DataFrame:
     df["porsi_pegawai"] = bagi("belanja_pegawai", "belanja", 100)
     df["porsi_barang"] = bagi("belanja_barang", "belanja", 100)
     df["porsi_lainnya"] = bagi("belanja_lainnya", "belanja", 100)
-    if "realisasi_belanja" in df:
+    # Tiap pasangan dicek sendiri: data yang hanya punya baris belanja (tanpa pendapatan) tidak boleh KeyError.
+    if {"realisasi_belanja", "anggaran_belanja"} <= set(df.columns):
         df["serapan_belanja"] = bagi("realisasi_belanja", "anggaran_belanja", 100)
+    if {"realisasi_pendapatan", "anggaran_pendapatan"} <= set(df.columns):
         df["capaian_pendapatan"] = bagi("realisasi_pendapatan", "anggaran_pendapatan", 100)
     df["surplus"] = df["pendapatan"] - df["belanja"]
     return df
