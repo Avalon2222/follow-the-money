@@ -73,3 +73,8 @@ def test_angka_dan_persen_minus_kecil_tidak_jadi_minus_nol():
     assert fmt.angka_id(-0.4, 0) == "0"
     assert fmt.persen(-0.04) == "0,0 %"
     assert fmt.angka_id(-1234.5, 1) == "-1.234,5"
+
+
+def test_desimal_negatif_dianggap_nol():
+    assert fmt.angka_id(1234.56, -1) == "1.235"
+    assert fmt.rupiah(45_200_000_000, -2) == "Rp 45 M"
