@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from src.skema import NAMA_PROVINSI, PULAU
+from src.skema import ALIAS_AKUN, NAMA_PROVINSI, PULAU
 
 AKAR = Path(__file__).resolve().parents[1]
 FOLDER_DATA = AKAR / "data"
@@ -18,7 +18,10 @@ def muat_apbd(path: Path | None = None) -> pd.DataFrame:
     df = pd.read_csv(path, dtype={"kode_bps": str, "induk": str})
     # Sama seperti muat_penduduk: kode " 11" harus tetap cocok dengan skema pulau dan GeoJSON.
     df["kode_bps"] = df["kode_bps"].str.strip()
-    df["induk"] = df["induk"].fillna("")
+    # Nama akun dirapikan seperti di skrip unduh: spasi berlebih dan ejaan lain DJPK
+    # ("Belanja Barang Jasa") membuat akun itu tidak terbaca di tabel lebar maupun Sankey.
+    for kolom in ("akun", "induk"):
+        df[kolom] = df[kolom].fillna("").astype(str).str.strip().replace(ALIAS_AKUN)
     df["tahun"] = df["tahun"].astype(int)
     df["tingkat"] = df["tingkat"].astype(int)
     df["pulau"] = df["kode_bps"].map(PULAU)
