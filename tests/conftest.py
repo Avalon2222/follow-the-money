@@ -7,7 +7,7 @@ import pytest
 AKAR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(AKAR))
 
-from src import muat_data  # noqa: E402
+from src import muat_data
 
 
 @pytest.fixture(scope="session")
@@ -31,8 +31,8 @@ def apbd_mini() -> pd.DataFrame:
     baris = []
 
     def tambah(kode, prov, akun, induk, tingkat, anggaran, realisasi):
-        baris.append(dict(kode_bps=kode, provinsi=prov, tahun=2024, akun=akun, induk=induk,
-                          tingkat=tingkat, anggaran=anggaran, realisasi=realisasi))
+        baris.append({"kode_bps": kode, "provinsi": prov, "tahun": 2024, "akun": akun, "induk": induk,
+                      "tingkat": tingkat, "anggaran": anggaran, "realisasi": realisasi})
 
     # Provinsi A: pendapatan 100, PAD 40, TKDD 50, lainnya 10; belanja 80 (pegawai 40, barang 20, modal 16, lainnya 4)
     tambah("11", "A", "Pendapatan Daerah", "", 1, 110, 100)
