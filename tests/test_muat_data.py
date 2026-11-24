@@ -80,3 +80,16 @@ def test_periksa_konsistensi_kode_kosong_dilaporkan(apbd, penduduk, geojson):
     rusak.loc[rusak.index[0], "kode_bps"] = None
     masalah = muat_data.periksa_konsistensi(rusak, penduduk, geojson)
     assert any("tanpa kode_bps" in m for m in masalah)
+
+
+def test_muat_apbd_baris_tanpa_tahun_dibuang(tmp_path):
+    asli = muat_data.FOLDER_DATA / "apbd_provinsi.csv"
+    baris = asli.read_text(encoding="utf-8").splitlines()
+    kolom = baris[0].split(",")
+    rusak = baris[1].split(",")
+    rusak[kolom.index("tahun")] = ""
+    path = tmp_path / "apbd.csv"
+    path.write_text("\n".join([baris[0], baris[1], ",".join(rusak)]) + "\n", encoding="utf-8")
+    df = muat_data.muat_apbd(path)
+    assert len(df) == 1
+    assert df["tahun"].dtype.kind == "i"
