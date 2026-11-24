@@ -22,6 +22,10 @@ def muat_apbd(path: Path | None = None) -> pd.DataFrame:
     # ("Belanja Barang Jasa") membuat akun itu tidak terbaca di tabel lebar maupun Sankey.
     for kolom in ("akun", "induk"):
         df[kolom] = df[kolom].fillna("").astype(str).str.strip().replace(ALIAS_AKUN)
+    # Baris tanpa tahun/tingkat (sel kosong di CSV) tidak bisa dipetakan; buang daripada astype(int) gagal.
+    for kolom in ("tahun", "tingkat"):
+        df[kolom] = pd.to_numeric(df[kolom], errors="coerce")
+    df = df.dropna(subset=["tahun", "tingkat"]).copy()
     df["tahun"] = df["tahun"].astype(int)
     df["tingkat"] = df["tingkat"].astype(int)
     df["pulau"] = df["kode_bps"].map(PULAU)
