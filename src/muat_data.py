@@ -55,8 +55,12 @@ def muat_sumber(path: Path | None = None) -> str:
 def periksa_konsistensi(apbd: pd.DataFrame, penduduk: pd.DataFrame, geojson: dict) -> list[str]:
     """Mengembalikan daftar masalah (kosong jika semua kunci cocok)."""
     masalah: list[str] = []
-    kode_apbd = set(apbd["kode_bps"])
-    kode_pend = set(penduduk["kode_bps"])
+    # Kode kosong (NaN) dilaporkan sendiri; kalau ikut di-sorted bersama teks, fungsi ini malah TypeError.
+    for nama, df in (("APBD", apbd), ("penduduk", penduduk)):
+        if df["kode_bps"].isna().any():
+            masalah.append(f"{nama}: {int(df['kode_bps'].isna().sum())} baris tanpa kode_bps")
+    kode_apbd = set(apbd["kode_bps"].dropna())
+    kode_pend = set(penduduk["kode_bps"].dropna())
     kode_geo = {f["properties"]["kode_bps"] for f in geojson["features"]}
     kode_skema = set(NAMA_PROVINSI)
     if kode_apbd - kode_skema:

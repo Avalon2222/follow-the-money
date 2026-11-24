@@ -73,3 +73,10 @@ def test_nama_akun_berspasi_dan_ejaan_lain_dirapikan(tmp_path):
     df = muat_data.muat_apbd(path)
     assert df["akun"].tolist() == ["Belanja Daerah", "Belanja Barang dan Jasa"]
     assert df["induk"].tolist() == ["", "Belanja Daerah"]
+
+
+def test_periksa_konsistensi_kode_kosong_dilaporkan(apbd, penduduk, geojson):
+    rusak = apbd.copy()
+    rusak.loc[rusak.index[0], "kode_bps"] = None
+    masalah = muat_data.periksa_konsistensi(rusak, penduduk, geojson)
+    assert any("tanpa kode_bps" in m for m in masalah)
