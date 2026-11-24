@@ -46,3 +46,9 @@ def test_sematkan_properti_kode_ganda_tidak_gagal(apbd_mini, penduduk_mini):
     ]}
     hasil = peta.sematkan_properti(geo, ganda, "kemandirian")
     assert hasil["features"][0]["properties"]["nilai"] == "40,0 %"
+
+
+def test_format_nilai_per_orang_kosong_cukup_strip():
+    assert peta.format_nilai(float("nan"), "rupiah_per_orang") == "-"
+    assert peta.format_nilai(None, "rupiah_per_orang") == "-"
+    assert peta.format_nilai(5_000_000, "rupiah_per_orang").endswith(" / orang")

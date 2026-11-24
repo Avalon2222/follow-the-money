@@ -18,7 +18,9 @@ def format_nilai(nilai: float, satuan: str) -> str:
     if satuan == "persen":
         return persen(nilai)
     if satuan == "rupiah_per_orang":
-        return rupiah(nilai, 2) + " / orang"
+        teks = rupiah(nilai, 2)
+        # Provinsi tanpa data penduduk cukup "-", bukan "- / orang".
+        return teks if teks == "-" else teks + " / orang"
     return rupiah(nilai)
 
 
