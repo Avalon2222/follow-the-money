@@ -26,6 +26,10 @@ def muat_apbd(path: Path | None = None) -> pd.DataFrame:
     for kolom in ("tahun", "tingkat"):
         df[kolom] = pd.to_numeric(df[kolom], errors="coerce")
     df = df.dropna(subset=["tahun", "tingkat"]).copy()
+    # Sel rupiah berisi teks (mis. "-" untuk kosong) membuat kolom jadi object, lalu pivot_table
+    # menyambung teks alih-alih menjumlahkan; jadikan angka, sel rusak jadi NaN.
+    for kolom in ("anggaran", "realisasi"):
+        df[kolom] = pd.to_numeric(df[kolom], errors="coerce")
     df["tahun"] = df["tahun"].astype(int)
     df["tingkat"] = df["tingkat"].astype(int)
     df["pulau"] = df["kode_bps"].map(PULAU)

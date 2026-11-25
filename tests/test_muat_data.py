@@ -93,3 +93,17 @@ def test_muat_apbd_baris_tanpa_tahun_dibuang(tmp_path):
     df = muat_data.muat_apbd(path)
     assert len(df) == 1
     assert df["tahun"].dtype.kind == "i"
+
+
+def test_nilai_rupiah_teks_jadi_angka(tmp_path):
+    path = tmp_path / "apbd.csv"
+    path.write_text(
+        "kode_bps,provinsi,tahun,akun,induk,tingkat,anggaran,realisasi\n"
+        "11,Aceh,2024,Belanja Daerah,,1,10,-\n"
+        "11,Aceh,2024,Pendapatan Daerah,,1,12,11\n",
+        encoding="utf-8",
+    )
+    df = muat_data.muat_apbd(path)
+    assert df["realisasi"].dtype.kind == "f"
+    assert df["realisasi"].isna().iloc[0]
+    assert df["realisasi"].iloc[1] == 11
