@@ -42,6 +42,8 @@ def muat_penduduk(path: Path | None = None) -> pd.DataFrame:
     df = pd.read_csv(path, dtype={"kode_bps": str})
     # Penduduk kosong dibiarkan NaN (rasio per kapita jadi "-"), tidak membuat astype gagal.
     penduduk = pd.to_numeric(df["penduduk_2025"], errors="coerce")
+    # inf lolos dari notna() lalu membuat astype("int64") gagal; anggap kosong saja.
+    penduduk = penduduk.where(penduduk.abs() != float("inf"))
     df["penduduk_2025"] = penduduk.astype("int64") if penduduk.notna().all() else penduduk
     df["kode_bps"] = df["kode_bps"].str.strip()
     return df

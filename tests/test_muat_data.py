@@ -107,3 +107,11 @@ def test_nilai_rupiah_teks_jadi_angka(tmp_path):
     assert df["realisasi"].dtype.kind == "f"
     assert df["realisasi"].isna().iloc[0]
     assert df["realisasi"].iloc[1] == 11
+
+
+def test_penduduk_inf_dianggap_kosong(tmp_path):
+    path = tmp_path / "penduduk.csv"
+    path.write_text("kode_bps,provinsi,penduduk_2025,luas_km2\n11,A,inf,10\n12,B,2000,5\n", encoding="utf-8")
+    df = muat_data.muat_penduduk(path)
+    assert df["penduduk_2025"].isna().iloc[0]
+    assert df["penduduk_2025"].iloc[1] == 2000
