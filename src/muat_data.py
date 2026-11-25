@@ -71,7 +71,11 @@ def periksa_konsistensi(apbd: pd.DataFrame, penduduk: pd.DataFrame, geojson: dic
             masalah.append(f"{nama}: {int(df['kode_bps'].isna().sum())} baris tanpa kode_bps")
     kode_apbd = set(apbd["kode_bps"].dropna())
     kode_pend = set(penduduk["kode_bps"].dropna())
-    kode_geo = {f["properties"]["kode_bps"] for f in geojson["features"]}
+    # Fitur tanpa properti kode_bps dilaporkan, bukan membuat seluruh pemeriksaan KeyError.
+    kode_geo_semua = [(f.get("properties") or {}).get("kode_bps") for f in geojson["features"]]
+    if None in kode_geo_semua:
+        masalah.append(f"geojson: {kode_geo_semua.count(None)} fitur tanpa kode_bps")
+    kode_geo = {k for k in kode_geo_semua if k is not None}
     kode_skema = set(NAMA_PROVINSI)
     if kode_apbd - kode_skema:
         masalah.append(f"kode APBD di luar skema: {sorted(kode_apbd - kode_skema)}")
