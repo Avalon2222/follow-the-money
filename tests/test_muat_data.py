@@ -115,3 +115,9 @@ def test_penduduk_inf_dianggap_kosong(tmp_path):
     df = muat_data.muat_penduduk(path)
     assert df["penduduk_2025"].isna().iloc[0]
     assert df["penduduk_2025"].iloc[1] == 2000
+
+
+def test_periksa_konsistensi_fitur_geojson_tanpa_kode(apbd, penduduk, geojson):
+    rusak = {**geojson, "features": [*geojson["features"], {"type": "Feature", "properties": {"provinsi": "X"}, "geometry": None}]}
+    masalah = muat_data.periksa_konsistensi(apbd, penduduk, rusak)
+    assert masalah == ["geojson: 1 fitur tanpa kode_bps"]
