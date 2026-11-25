@@ -52,3 +52,16 @@ def test_format_nilai_per_orang_kosong_cukup_strip():
     assert peta.format_nilai(float("nan"), "rupiah_per_orang") == "-"
     assert peta.format_nilai(None, "rupiah_per_orang") == "-"
     assert peta.format_nilai(5_000_000, "rupiah_per_orang").endswith(" / orang")
+
+
+def test_sematkan_properti_fitur_tanpa_kode(apbd_mini, penduduk_mini):
+    lebar = analisis.tabel_lebar(apbd_mini, penduduk_mini)
+    geo = {"type": "FeatureCollection", "features": [
+        {"type": "Feature", "properties": {"provinsi": "Tanpa kode"}, "geometry": None},
+        {"type": "Feature", "properties": None, "geometry": None},
+        {"type": "Feature", "properties": {"kode_bps": "11", "provinsi": "A"}, "geometry": None},
+    ]}
+    hasil = peta.sematkan_properti(geo, lebar, "kemandirian")
+    assert hasil["features"][0]["properties"]["nilai"] == "tidak ada data"
+    assert hasil["features"][1]["properties"]["nilai"] == "tidak ada data"
+    assert hasil["features"][2]["properties"]["nilai"] == "40,0 %"

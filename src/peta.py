@@ -31,8 +31,11 @@ def sematkan_properti(geojson: dict, lebar_tahun: pd.DataFrame, metrik: str) -> 
     baris = lebar_tahun.drop_duplicates("kode_bps", keep="last").set_index("kode_bps")
     m = METRIK[metrik]
     for f in g["features"]:
-        kode = f["properties"]["kode_bps"]
+        # Fitur tanpa properti/kode tetap diberi "tidak ada data" supaya tooltip tidak KeyError.
+        if f.get("properties") is None:
+            f["properties"] = {}
         p = f["properties"]
+        kode = p.get("kode_bps")
         if kode in baris.index:
             r = baris.loc[kode]
             p["nilai"] = format_nilai(r[metrik], m.satuan)
