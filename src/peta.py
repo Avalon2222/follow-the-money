@@ -63,7 +63,8 @@ def buat_peta(geojson: dict, lebar_tahun: pd.DataFrame, metrik: str, tahun: int)
     """Membangun peta choropleth untuk satu metrik dan tahun."""
     m = METRIK[metrik]
     pembagi, satuan_legenda = skala_legenda(m.satuan)
-    data = lebar_tahun[["kode_bps", metrik]].dropna().copy()
+    # Nilai inf (mis. hasil bagi data rusak) membuat Choropleth gagal menghitung bin; anggap tidak ada data.
+    data = lebar_tahun[["kode_bps", metrik]].replace([float("inf"), float("-inf")], float("nan")).dropna().copy()
     data[metrik] = data[metrik] / pembagi
     peta = folium.Map(location=PUSAT_INDONESIA, zoom_start=4, tiles="OpenStreetMap", control_scale=True)
     peta.fit_bounds(BATAS_INDONESIA)

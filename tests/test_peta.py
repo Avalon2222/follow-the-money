@@ -65,3 +65,12 @@ def test_sematkan_properti_fitur_tanpa_kode(apbd_mini, penduduk_mini):
     assert hasil["features"][0]["properties"]["nilai"] == "tidak ada data"
     assert hasil["features"][1]["properties"]["nilai"] == "tidak ada data"
     assert hasil["features"][2]["properties"]["nilai"] == "40,0 %"
+
+
+def test_buat_peta_nilai_tak_hingga_tidak_gagal(apbd, penduduk, geojson):
+    lebar = analisis.tabel_lebar(apbd, penduduk)
+    th = lebar[lebar["tahun"] == 2024].copy()
+    th.loc[th.index[0], "belanja_per_kapita"] = float("inf")
+    m = peta.buat_peta(geojson, th, "belanja_per_kapita", 2024)
+    assert isinstance(m, folium.Map)
+    assert "Papua Pegunungan" in m.get_root().render()
