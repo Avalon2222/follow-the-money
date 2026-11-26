@@ -228,3 +228,11 @@ def test_sankey_rincian_ganda_jadi_satu_tautan(apbd_mini):
     pajak = s["label"].index("Pajak Daerah")
     nilai = [v for a, v in zip(s["sumber"], s["nilai"]) if a == pajak]
     assert nilai == [35.0]
+
+
+def test_peringkat_provinsi_tanpa_nilai_tidak_keyerror(apbd_mini, penduduk_mini):
+    lebar = analisis.tabel_lebar(apbd_mini, penduduk_mini)
+    # Provinsi B berpenduduk 0, jadi belanja per kapitanya kosong.
+    assert analisis.peringkat_provinsi(lebar, "belanja_per_kapita", "12") == (None, 1)
+    assert analisis.peringkat_provinsi(lebar, "belanja_per_kapita", "11") == (1, 1)
+    assert analisis.peringkat_provinsi(lebar, "belanja", "12", terbesar=False) == (1, 2)

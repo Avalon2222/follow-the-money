@@ -167,6 +167,17 @@ def peringkat(lebar_tahun: pd.DataFrame, metrik: str, n: int | None = None, terb
     return df if n is None else df.head(max(n, 0))
 
 
+def peringkat_provinsi(lebar_tahun: pd.DataFrame, metrik: str, kode_bps: str, terbesar: bool = True) -> tuple[int | None, int]:
+    """(peringkat, jumlah provinsi yang punya nilai) untuk satu provinsi.
+
+    Peringkat None bila nilai provinsi itu kosong (mis. tanpa data penduduk), alih-alih KeyError
+    karena provinsinya dibuang oleh `peringkat`.
+    """
+    urut = peringkat(lebar_tahun, metrik, terbesar=terbesar)
+    cocok = urut.loc[urut["kode_bps"] == kode_bps, "peringkat"]
+    return (int(cocok.iloc[0]) if len(cocok) else None), len(urut)
+
+
 def aliran_sankey(apbd: pd.DataFrame, kode_bps: str, tahun: int, basis: str = "realisasi") -> dict:
     """Simpul dan tautan untuk diagram Sankey: sumber pendapatan -> kas daerah -> jenis belanja.
 
