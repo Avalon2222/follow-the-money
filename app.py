@@ -154,16 +154,18 @@ with tab_profil:
     kode = baris["kode_bps"]
     semua_tahun = lebar[lebar["kode_bps"] == kode].sort_values("tahun")
 
-    def peringkat_dari(metrik: str, terbesar: bool = True) -> int:
-        return int(analisis.peringkat(th, metrik, terbesar=terbesar).set_index("kode_bps").loc[kode, "peringkat"])
+    def peringkat_dari(metrik: str, terbesar: bool = True) -> str:
+        # Provinsi tanpa nilai (mis. penduduk kosong) tidak punya peringkat; jangan sampai tab ini KeyError.
+        posisi, total = analisis.peringkat_provinsi(th, metrik, kode, terbesar=terbesar)
+        return f"peringkat {posisi if posisi is not None else '-'} dari {total}"
 
     c1, c2, c3, c4, c5 = st.columns(5)
-    c1.metric("Pendapatan", rupiah(baris["pendapatan"]), f"peringkat {peringkat_dari('pendapatan')} dari 38", delta_color="off")
-    c2.metric("Belanja", rupiah(baris["belanja"]), f"peringkat {peringkat_dari('belanja')} dari 38", delta_color="off")
+    c1.metric("Pendapatan", rupiah(baris["pendapatan"]), peringkat_dari("pendapatan"), delta_color="off")
+    c2.metric("Belanja", rupiah(baris["belanja"]), peringkat_dari("belanja"), delta_color="off")
     c3.metric("Belanja per penduduk", rupiah(baris["belanja_per_kapita"], 2),
-              f"peringkat {peringkat_dari('belanja_per_kapita')} dari 38", delta_color="off")
+              peringkat_dari("belanja_per_kapita"), delta_color="off")
     c4.metric("Kemandirian fiskal", persen(baris["kemandirian"]),
-              f"peringkat {peringkat_dari('kemandirian')} dari 38", delta_color="off")
+              peringkat_dari("kemandirian"), delta_color="off")
     c5.metric("Penduduk (jiwa)", f"{angka_id(baris['penduduk'] / 1e6, 2)} juta", f"{baris['pulau']}", delta_color="off")
 
     st.subheader(f"Aliran uang {prov} {tahun} ({basis})")
