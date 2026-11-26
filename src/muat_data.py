@@ -28,8 +28,10 @@ def muat_apbd(path: Path | None = None) -> pd.DataFrame:
     df = df.dropna(subset=["tahun", "tingkat"]).copy()
     # Sel rupiah berisi teks (mis. "-" untuk kosong) membuat kolom jadi object, lalu pivot_table
     # menyambung teks alih-alih menjumlahkan; jadikan angka, sel rusak jadi NaN.
+    # inf (sel rusak) juga jadi NaN; kalau lolos, total provinsi dan semua rasionya ikut tak hingga.
     for kolom in ("anggaran", "realisasi"):
-        df[kolom] = pd.to_numeric(df[kolom], errors="coerce")
+        angka = pd.to_numeric(df[kolom], errors="coerce")
+        df[kolom] = angka.where(angka.abs() != float("inf"))
     df["tahun"] = df["tahun"].astype(int)
     df["tingkat"] = df["tingkat"].astype(int)
     df["pulau"] = df["kode_bps"].map(PULAU)

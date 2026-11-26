@@ -121,3 +121,16 @@ def test_periksa_konsistensi_fitur_geojson_tanpa_kode(apbd, penduduk, geojson):
     rusak = {**geojson, "features": [*geojson["features"], {"type": "Feature", "properties": {"provinsi": "X"}, "geometry": None}]}
     masalah = muat_data.periksa_konsistensi(apbd, penduduk, rusak)
     assert masalah == ["geojson: 1 fitur tanpa kode_bps"]
+
+
+def test_nilai_rupiah_tak_hingga_dianggap_kosong(tmp_path):
+    path = tmp_path / "apbd.csv"
+    path.write_text(
+        "kode_bps,provinsi,tahun,akun,induk,tingkat,anggaran,realisasi\n"
+        "11,Aceh,2024,Belanja Daerah,,1,inf,9\n"
+        "11,Aceh,2024,Pendapatan Daerah,,1,12,-inf\n",
+        encoding="utf-8",
+    )
+    df = muat_data.muat_apbd(path)
+    assert df["anggaran"].isna().tolist() == [True, False]
+    assert df["realisasi"].isna().tolist() == [False, True]
