@@ -217,3 +217,14 @@ def test_tabel_lebar_tanpa_baris_pendapatan_tidak_error(apbd_mini, penduduk_mini
     lebar = analisis.tabel_lebar(hanya_belanja, penduduk_mini)
     assert "serapan_belanja" in lebar
     assert "capaian_pendapatan" not in lebar
+
+
+def test_sankey_rincian_ganda_jadi_satu_tautan(apbd_mini):
+    # Pajak Daerah tercatat dua kali (30 + 5): harus jadi satu tautan bernilai 35, bukan dua tautan.
+    tambahan = apbd_mini[(apbd_mini["kode_bps"] == "11") & (apbd_mini["akun"] == "Pajak Daerah")].copy()
+    tambahan["realisasi"] = 5
+    df = pd.concat([apbd_mini, tambahan], ignore_index=True)
+    s = analisis.aliran_sankey(df, "11", 2024)
+    pajak = s["label"].index("Pajak Daerah")
+    nilai = [v for a, v in zip(s["sumber"], s["nilai"]) if a == pajak]
+    assert nilai == [35.0]

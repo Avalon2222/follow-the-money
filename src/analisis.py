@@ -195,18 +195,21 @@ def aliran_sankey(apbd: pd.DataFrame, kode_bps: str, tahun: int, basis: str = "r
             jumlah.append(float(v))
 
     # pendapatan: rincian -> jenis -> kas
+    def rincian(induk: str) -> pd.Series:
+        # Rincian yang tercatat dua kali dijumlahkan jadi satu tautan, sama seperti nilai per jenis.
+        baris = df[(df["induk"] == induk) & (df["tingkat"] == 3)]
+        return baris.groupby("akun", sort=False)[basis].sum(min_count=1)
+
     for jenis in ("PAD", "TKDD", "Pendapatan Lainnya"):
-        rincian = df[(df["induk"] == jenis) & (df["tingkat"] == 3)]
-        for _, r in rincian.iterrows():
-            tautan(label(r["akun"]), label(jenis), r[basis])
+        for akun, v in rincian(jenis).items():
+            tautan(label(akun), label(jenis), v)
         tautan(label(jenis), kas, nilai.get(jenis, 0))
 
     # belanja: kas -> jenis -> rincian (untuk belanja lainnya)
     for jenis in ("Belanja Pegawai", "Belanja Barang dan Jasa", "Belanja Modal", "Belanja Lainnya"):
         tautan(kas, jenis, nilai.get(jenis, 0))
-    rincian = df[(df["induk"] == "Belanja Lainnya") & (df["tingkat"] == 3)]
-    for _, r in rincian.iterrows():
-        tautan("Belanja Lainnya", label(r["akun"]), r[basis])
+    for akun, v in rincian("Belanja Lainnya").items():
+        tautan("Belanja Lainnya", label(akun), v)
 
     return {"label": label_simpul, "sumber": sumber, "tujuan": tujuan, "nilai": jumlah}
 
