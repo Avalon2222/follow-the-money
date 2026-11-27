@@ -134,3 +134,17 @@ def test_nilai_rupiah_tak_hingga_dianggap_kosong(tmp_path):
     df = muat_data.muat_apbd(path)
     assert df["anggaran"].isna().tolist() == [True, False]
     assert df["realisasi"].isna().tolist() == [False, True]
+
+
+def test_tahun_atau_tingkat_pecahan_dibuang(tmp_path):
+    path = tmp_path / "apbd.csv"
+    path.write_text(
+        "kode_bps,provinsi,tahun,akun,induk,tingkat,anggaran,realisasi\n"
+        "11,Aceh,2024,Pendapatan Daerah,,1,10,9\n"
+        "11,Aceh,2024.5,Pendapatan Daerah,,1,99,99\n"
+        "11,Aceh,2024,Belanja Daerah,,1.5,99,99\n",
+        encoding="utf-8",
+    )
+    df = muat_data.muat_apbd(path)
+    assert len(df) == 1
+    assert df["realisasi"].iloc[0] == 9
