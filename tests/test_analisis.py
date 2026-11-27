@@ -236,3 +236,11 @@ def test_peringkat_provinsi_tanpa_nilai_tidak_keyerror(apbd_mini, penduduk_mini)
     assert analisis.peringkat_provinsi(lebar, "belanja_per_kapita", "12") == (None, 1)
     assert analisis.peringkat_provinsi(lebar, "belanja_per_kapita", "11") == (1, 1)
     assert analisis.peringkat_provinsi(lebar, "belanja", "12", terbesar=False) == (1, 2)
+
+
+def test_per_kapita_nasional_mengabaikan_provinsi_berpenduduk_nol(apbd_mini, penduduk_mini):
+    lebar = analisis.tabel_lebar(apbd_mini, penduduk_mini)
+    # Provinsi B tercatat 0 jiwa: belanjanya (50) tidak boleh ikut pembilang tanpa penduduk di penyebut.
+    assert analisis.ringkasan_nasional(lebar)["belanja_per_kapita"] == pytest.approx(80 / 1_000_000)
+    pulau = analisis.agregat_pulau(lebar).set_index("pulau")
+    assert pulau.loc["Sumatera", "belanja_per_kapita"] == pytest.approx(80 / 1_000_000)

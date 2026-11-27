@@ -143,7 +143,8 @@ def ringkasan_nasional(lebar_tahun: pd.DataFrame) -> dict[str, float]:
     total = lebar_tahun[["pendapatan", "belanja", "pad", "tkdd", "belanja_modal", "belanja_pegawai", "penduduk"]].sum()
     # Provinsi tanpa data penduduk tidak boleh ikut menyumbang belanja ke pembilang per kapita,
     # karena penduduknya tidak ada di penyebut (hasilnya jadi terlalu besar).
-    berpenduduk = lebar_tahun[lebar_tahun["penduduk"].notna()]
+    # Penduduk 0 (data rusak) juga tidak dihitung, sama seperti tambah_rasio yang menganggapnya kosong.
+    berpenduduk = lebar_tahun[lebar_tahun["penduduk"] > 0]
     belanja_berpenduduk = berpenduduk["belanja"].sum()
     return {
         "pendapatan": float(total["pendapatan"]),
@@ -249,7 +250,7 @@ def agregat_pulau(lebar_tahun: pd.DataFrame) -> pd.DataFrame:
     g = df.groupby("pulau", as_index=False)[kolom].sum()
     hasil = tambah_rasio(g)
     # Per kapita hanya dari provinsi yang punya data penduduk, sama seperti ringkasan_nasional.
-    berpenduduk = df[df["penduduk"].notna()].groupby("pulau")[["belanja", "pendapatan", "tkdd"]].sum()
+    berpenduduk = df[df["penduduk"] > 0].groupby("pulau")[["belanja", "pendapatan", "tkdd"]].sum()
     penduduk = hasil["penduduk"].where(hasil["penduduk"] != 0)
     for k in ["belanja", "pendapatan", "tkdd"]:
         hasil[f"{k}_per_kapita"] = (hasil["pulau"].map(berpenduduk[k]) / penduduk).astype(float)
