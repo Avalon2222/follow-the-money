@@ -156,3 +156,18 @@ def test_penduduk_negatif_dianggap_kosong(tmp_path):
     df = muat_data.muat_penduduk(path)
     assert df["penduduk_2025"].isna().iloc[0]
     assert df["penduduk_2025"].iloc[1] == 2000
+
+
+def test_kode_geojson_angka_atau_berspasi_jadi_teks(tmp_path):
+    import json
+
+    path = tmp_path / "provinsi.geojson"
+    fitur = [
+        {"type": "Feature", "properties": {"kode_bps": 11, "provinsi": "Aceh"}, "geometry": None},
+        {"type": "Feature", "properties": {"kode_bps": " 12", "provinsi": "Sumut"}, "geometry": None},
+        {"type": "Feature", "properties": {"kode_bps": 13.0, "provinsi": "Sumbar"}, "geometry": None},
+        {"type": "Feature", "properties": {"provinsi": "Tanpa kode"}, "geometry": None},
+    ]
+    path.write_text(json.dumps({"type": "FeatureCollection", "features": fitur}), encoding="utf-8")
+    g = muat_data.muat_geojson(path)
+    assert [f["properties"].get("kode_bps") for f in g["features"]] == ["11", "12", "13", None]
