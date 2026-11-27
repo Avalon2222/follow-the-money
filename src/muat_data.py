@@ -58,7 +58,17 @@ def muat_geojson(path: Path | None = None) -> dict:
     """GeoJSON batas 38 provinsi, properti: kode_bps dan provinsi."""
     path = path or FOLDER_DATA / "provinsi.geojson"
     with path.open(encoding="utf-8") as f:
-        return json.load(f)
+        data = json.load(f)
+    # kode_bps berupa angka (11) atau berspasi (" 11") tidak cocok dengan kode teks di tabel APBD,
+    # sehingga seluruh peta jadi abu-abu "tidak ada data". Samakan jadi teks rapi.
+    for fitur in data.get("features", []):
+        prop = fitur.get("properties") or {}
+        kode = prop.get("kode_bps")
+        if isinstance(kode, float) and kode.is_integer():
+            kode = int(kode)
+        if kode is not None:
+            prop["kode_bps"] = str(kode).strip()
+    return data
 
 
 def muat_sumber(path: Path | None = None) -> str:
