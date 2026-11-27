@@ -25,7 +25,9 @@ def muat_apbd(path: Path | None = None) -> pd.DataFrame:
     # Baris tanpa tahun/tingkat (sel kosong di CSV) tidak bisa dipetakan; buang daripada astype(int) gagal.
     for kolom in ("tahun", "tingkat"):
         df[kolom] = pd.to_numeric(df[kolom], errors="coerce")
-    df = df.dropna(subset=["tahun", "tingkat"]).copy()
+    # Tahun/tingkat pecahan (2024.5) juga dibuang; astype(int) diam-diam memotongnya jadi 2024.
+    utuh = (df["tahun"] % 1 == 0) & (df["tingkat"] % 1 == 0)
+    df = df[utuh].dropna(subset=["tahun", "tingkat"]).copy()
     # Sel rupiah berisi teks (mis. "-" untuk kosong) membuat kolom jadi object, lalu pivot_table
     # menyambung teks alih-alih menjumlahkan; jadikan angka, sel rusak jadi NaN.
     # inf (sel rusak) juga jadi NaN; kalau lolos, total provinsi dan semua rasionya ikut tak hingga.
