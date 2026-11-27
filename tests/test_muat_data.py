@@ -148,3 +148,11 @@ def test_tahun_atau_tingkat_pecahan_dibuang(tmp_path):
     df = muat_data.muat_apbd(path)
     assert len(df) == 1
     assert df["realisasi"].iloc[0] == 9
+
+
+def test_penduduk_negatif_dianggap_kosong(tmp_path):
+    path = tmp_path / "penduduk.csv"
+    path.write_text("kode_bps,provinsi,penduduk_2025,luas_km2\n11,A,-5000,10\n12,B,2000,5\n", encoding="utf-8")
+    df = muat_data.muat_penduduk(path)
+    assert df["penduduk_2025"].isna().iloc[0]
+    assert df["penduduk_2025"].iloc[1] == 2000
