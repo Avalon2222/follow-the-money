@@ -244,3 +244,11 @@ def test_per_kapita_nasional_mengabaikan_provinsi_berpenduduk_nol(apbd_mini, pen
     assert analisis.ringkasan_nasional(lebar)["belanja_per_kapita"] == pytest.approx(80 / 1_000_000)
     pulau = analisis.agregat_pulau(lebar).set_index("pulau")
     assert pulau.loc["Sumatera", "belanja_per_kapita"] == pytest.approx(80 / 1_000_000)
+
+
+def test_tabel_lebar_provinsi_kosong_tidak_hilang(apbd_mini, penduduk_mini):
+    rusak = apbd_mini.copy()
+    rusak.loc[rusak["kode_bps"] == "12", "provinsi"] = None
+    lebar = analisis.tabel_lebar(rusak, penduduk_mini)
+    assert sorted(lebar["kode_bps"]) == ["11", "12"]
+    assert lebar.loc[lebar["kode_bps"] == "12", "provinsi"].iloc[0] == "Sumatera Utara"
