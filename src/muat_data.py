@@ -21,7 +21,8 @@ def muat_apbd(path: Path | None = None) -> pd.DataFrame:
     # Nama akun dirapikan seperti di skrip unduh: spasi berlebih dan ejaan lain DJPK
     # ("Belanja Barang Jasa") membuat akun itu tidak terbaca di tabel lebar maupun Sankey.
     for kolom in ("akun", "induk"):
-        df[kolom] = df[kolom].fillna("").astype(str).str.strip().replace(ALIAS_AKUN)
+        # Spasi ganda di tengah ("Belanja  Modal") juga dirapikan; strip saja hanya membuang ujungnya.
+        df[kolom] = df[kolom].fillna("").astype(str).str.split().str.join(" ").replace(ALIAS_AKUN)
     # Baris tanpa tahun/tingkat (sel kosong di CSV) tidak bisa dipetakan; buang daripada astype(int) gagal.
     for kolom in ("tahun", "tingkat"):
         df[kolom] = pd.to_numeric(df[kolom], errors="coerce")

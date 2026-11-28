@@ -171,3 +171,16 @@ def test_kode_geojson_angka_atau_berspasi_jadi_teks(tmp_path):
     path.write_text(json.dumps({"type": "FeatureCollection", "features": fitur}), encoding="utf-8")
     g = muat_data.muat_geojson(path)
     assert [f["properties"].get("kode_bps") for f in g["features"]] == ["11", "12", "13", None]
+
+
+def test_nama_akun_spasi_ganda_di_tengah_dirapikan(tmp_path):
+    path = tmp_path / "apbd.csv"
+    path.write_text(
+        "kode_bps,provinsi,tahun,akun,induk,tingkat,anggaran,realisasi\n"
+        "11,Aceh,2024,Belanja  Daerah,,1,10,9\n"
+        "11,Aceh,2024,Belanja   Modal,Belanja  Daerah,2,4,3\n",
+        encoding="utf-8",
+    )
+    df = muat_data.muat_apbd(path)
+    assert df["akun"].tolist() == ["Belanja Daerah", "Belanja Modal"]
+    assert df["induk"].tolist() == ["", "Belanja Daerah"]
