@@ -197,3 +197,17 @@ def test_nama_provinsi_berspasi_atau_kosong_dirapikan(tmp_path):
     )
     df = muat_data.muat_apbd(path)
     assert df["provinsi"].tolist() == ["Aceh", "Aceh", "Sumatera Utara"]
+
+
+def test_kode_geojson_teks_desimal_jadi_kode_bulat(tmp_path):
+    import json
+
+    path = tmp_path / "provinsi.geojson"
+    fitur = [
+        {"type": "Feature", "properties": {"kode_bps": "11.0", "provinsi": "Aceh"}, "geometry": None},
+        {"type": "Feature", "properties": {"kode_bps": " 12.00 ", "provinsi": "Sumut"}, "geometry": None},
+        {"type": "Feature", "properties": {"kode_bps": "13", "provinsi": "Sumbar"}, "geometry": None},
+    ]
+    path.write_text(json.dumps({"type": "FeatureCollection", "features": fitur}), encoding="utf-8")
+    g = muat_data.muat_geojson(path)
+    assert [f["properties"]["kode_bps"] for f in g["features"]] == ["11", "12", "13"]
