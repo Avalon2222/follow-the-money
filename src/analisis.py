@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 import pandas as pd
 
-from src.skema import PULAU, label
+from src.skema import NAMA_PROVINSI, PULAU, label
 
 # Akun yang diangkat menjadi kolom pada tabel lebar
 AKUN_KOLOM: dict[str, str] = {
@@ -73,6 +73,10 @@ def tabel_lebar(apbd: pd.DataFrame, penduduk: pd.DataFrame, basis: str = "realis
         raise ValueError("basis harus 'realisasi' atau 'anggaran'")
     inti = apbd[apbd["akun"].isin(AKUN_KOLOM)].copy()
     inti["kolom"] = inti["akun"].map(AKUN_KOLOM)
+    # pivot_table membuang baris yang nama provinsinya kosong, sehingga provinsi itu hilang diam-diam
+    # dari tabel; isi dari kode BPS supaya angkanya tetap terhitung.
+    provinsi = inti["provinsi"].astype("object").where(inti["provinsi"].notna() & (inti["provinsi"].astype(str).str.strip() != ""))
+    inti["provinsi"] = provinsi.fillna(inti["kode_bps"].map(NAMA_PROVINSI)).fillna(inti["kode_bps"])
     lebar = inti.pivot_table(index=["kode_bps", "provinsi", "tahun"], columns="kolom",
                              values=basis, aggfunc="sum").reset_index()
     for kolom in AKUN_KOLOM.values():
