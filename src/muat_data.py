@@ -18,6 +18,11 @@ def muat_apbd(path: Path | None = None) -> pd.DataFrame:
     df = pd.read_csv(path, dtype={"kode_bps": str, "induk": str})
     # Sama seperti muat_penduduk: kode " 11" harus tetap cocok dengan skema pulau dan GeoJSON.
     df["kode_bps"] = df["kode_bps"].str.strip()
+    # Nama provinsi berspasi ("Aceh ") membuat satu provinsi terpecah dua baris di tabel lebar;
+    # nama yang kosong diisi dari skema supaya barisnya tidak dibuang pivot.
+    provinsi = df["provinsi"].astype("object").where(df["provinsi"].notna(), "")
+    provinsi = provinsi.astype(str).str.strip()
+    df["provinsi"] = provinsi.where(provinsi != "", df["kode_bps"].map(NAMA_PROVINSI))
     # Nama akun dirapikan seperti di skrip unduh: spasi berlebih dan ejaan lain DJPK
     # ("Belanja Barang Jasa") membuat akun itu tidak terbaca di tabel lebar maupun Sankey.
     for kolom in ("akun", "induk"):
