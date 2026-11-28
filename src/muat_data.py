@@ -73,7 +73,11 @@ def muat_geojson(path: Path | None = None) -> dict:
         if isinstance(kode, float) and kode.is_integer():
             kode = int(kode)
         if kode is not None:
-            prop["kode_bps"] = str(kode).strip()
+            kode = str(kode).strip()
+            # Kode berbentuk teks desimal ("11.0", hasil ekspor spreadsheet) juga harus jadi "11".
+            if kode.replace(".", "", 1).isdigit() and "." in kode and float(kode).is_integer():
+                kode = str(int(float(kode)))
+            prop["kode_bps"] = kode
     return data
 
 
